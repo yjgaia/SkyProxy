@@ -1,26 +1,26 @@
-# ProxyServer
+# SkyProxy
 한 서버에서 여러 도메인을 사용하고자 할때 필요한 프록시 서버입니다.
 
 ## 설치
 1. [UPPERCASE](https://github.com/Hanul/UPPERCASE)가 설치되어 있어야 합니다.
-2. `ProxyServer` 폴더 자체를 서버에 복사합니다.
-3. `RunProxyServer.js`을 원하는 대로 수정합니다.
+2. `SkyProxy` 폴더 자체를 서버에 복사합니다.
+3. `RunSkyProxy.js`을 원하는 대로 수정합니다.
 4. `forever` 등으로 실행합니다.
 
 ```
-forever start RunProxyServer.js
+forever start RunSkyProxy.js
 ```
 
 ## RunProxyServer.js 수정하기
 `RunProxyServer.js`의 기본 형태는 다음과 같습니다.
 ```javascript
-require('./ProxyServer.js');
+require('./SkyProxy.js');
 
 // 멀티코어 사용
 CPU_CLUSTERING(function() {
 	'use strict';
 	
-	ProxyServer(function(route, redirect, redirectByLanguage, ready, sroute) {
+	SkyProxy(function(route, redirect, redirectByLanguage, ready, sroute) {
 		...
 	});
 });
@@ -60,10 +60,10 @@ redirect('secure.site.com', 'https://secure.site.com');
 ```
 
 ## 404.html
-접속한 주소의 리소스를 찾을 수 없는 경우 제공되는 페이지입니다.
+접속한 주소의 리소스를 찾을 수 없는 경우 제공되는 페이지입니다. 수정해서 사용하시기 바랍니다.
 
 ## ready.html
-`ready`함수로 지정한 도메인에 접속 시 제공되는 준비중 페이지입니다.
+`ready`함수로 지정한 도메인에 접속 시 제공되는 준비중 페이지입니다. 수정해서 사용하시기 바랍니다.
 
 ## 라이센스
 [MIT](LICENSE)

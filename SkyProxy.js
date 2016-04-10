@@ -1,7 +1,6 @@
-require(process.env['UPPERCASE_PATH'] + '/UJS-COMMON.js');
-require(process.env['UPPERCASE_PATH'] + '/UJS-NODE.js');
+require('./UJS-NODE.js');
 
-ProxyServer = METHOD({
+global.SkyProxy = METHOD({
 	
 	run : function(handler) {
 		'use strict';
@@ -198,6 +197,6 @@ ProxyServer = METHOD({
 		
 		handler(route, redirect, redirectByLanguage, ready, sroute);
 		
-		console.log('Started ProxyServer!');
+		console.log('Started SkyProxy!');
 	}
 });

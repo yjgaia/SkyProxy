@@ -1,10 +1,10 @@
-require('./ProxyServer.js');
+require('./SkyProxy.js');
 
 // 멀티코어 사용
 CPU_CLUSTERING(function() {
 	'use strict';
 	
-	ProxyServer(function(route, redirect, redirectByLanguage, ready, sroute) {
+	SkyProxy(function(route, redirect, redirectByLanguage, ready, sroute) {
 		
 		// rout samples
 		route('a.site.com', 8888);
