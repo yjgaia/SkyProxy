@@ -11,8 +11,8 @@
 forever start RunSkyProxy.js
 ```
 
-## RunProxyServer.js 수정하기
-`RunProxyServer.js`의 기본 형태는 다음과 같습니다.
+## RunSkyProxy.js 수정하기
+`RunSkyProxy.js`의 기본 형태는 다음과 같습니다.
 ```javascript
 require('./SkyProxy.js');
 
