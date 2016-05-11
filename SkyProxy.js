@@ -47,6 +47,12 @@ global.SkyProxy = METHOD({
 	
 		// ready port
 		readyPort = 10000,
+		
+		// http server
+		httpServer,
+		
+		// https server
+		httpsServer,
 	
 		// route.
 		route,
@@ -69,6 +75,11 @@ global.SkyProxy = METHOD({
 				server : httpProxy.createProxyServer({
 					target : 'http://' + domain,
 					xfwd : true
+				}),
+				webSocketServer : httpProxy.createProxyServer({
+					target: 'ws://' + domain,
+					xfwd : true,
+					ws : true
 				}),
 				port : port
 			};
@@ -138,6 +149,11 @@ global.SkyProxy = METHOD({
 					target : 'https://' + domain,
 					xfwd : true
 				}),
+				webSocketServer : httpProxy.createProxyServer({
+					target: 'wss://' + domain,
+					xfwd : true,
+					ws : true
+				}),
 				ssl : {
 					key : fs.readFileSync(key),
 					cert : fs.readFileSync(cert)
@@ -151,7 +167,7 @@ global.SkyProxy = METHOD({
 			}).context;
 		};
 		
-		http.createServer(function(req, res) {
+		httpServer = http.createServer(function(req, res) {
 	
 			var
 			// proxy
@@ -168,10 +184,26 @@ global.SkyProxy = METHOD({
 			} else {
 				res.end(_404Page, 'utf-8');
 			}
+		});
+		
+		httpServer.on('upgrade', function(req, socket, head) {
+			
+			var
+			// proxy
+			proxy = proxys[req.headers.host];
 	
-		}).listen(80);
+			if (proxy !== undefined) {
+				proxy.webSocketServer.ws(req, socket, head, {
+					target : 'ws://localhost:' + proxy.port
+				}, function(e) {
+					console.log(e);
+				});
+			}
+		});
+		
+		httpServer.listen(80);
 	
-		https.createServer({
+		httpsServer = https.createServer({
 			SNICallback : function(domain, callback) {
 				callback(null, secureContext[domain]);
 			}
@@ -192,8 +224,24 @@ global.SkyProxy = METHOD({
 			} else {
 				res.end(_404Page, 'utf-8');
 			}
+		});
+		
+		httpsServer.on('upgrade', function(req, socket, head) {
+			
+			var
+			// proxy
+			proxy = secureProxys[req.headers.host];
 	
-		}).listen(443);
+			if (proxy !== undefined) {
+				proxy.webSocketServer.ws(req, socket, head, {
+					target : 'ws://localhost:' + proxy.port
+				}, function(e) {
+					console.log(e);
+				});
+			}
+		});
+		
+		httpsServer.listen(443);
 		
 		handler(route, redirect, redirectByLanguage, ready, sroute);
 		
