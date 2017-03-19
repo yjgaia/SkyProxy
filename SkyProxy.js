@@ -1,82 +1,41 @@
-require('./UJS-NODE.js');
+require('uppercase-core');
 
 global.SkyProxy = METHOD({
 	
-	run : function(handler) {
-		'use strict';
+	run : (handler) => {
 		
-		var
-		//IMPORT: fs
-		fs = require('fs'),
-	
-		//IMPORT: http
-		http = require('http'),
-	
-		//IMPORT: https
-		https = require('https'),
-	
-		//IMPORT: http-proxy
-		httpProxy = require('http-proxy'),
-	
-		//IMPORT: tls
-		tls = require('tls'),
+		let FS = require('fs');
+		let HTTP = require('http');
+		let HTTPS = require('https');
+		let TLS = require('tls');
+		let HTTPProxy = require('http-proxy');
 		
-		// 404 page
-		_404Page = READ_FILE({
+		let _404Page = READ_FILE({
 			path : '404.html',
 			isSync : true
-		}).toString(),
+		}).toString();
 		
-		// ready page
-		readyPage = READ_FILE({
+		let readyPage = READ_FILE({
 			path : 'ready.html',
 			isSync : true
-		}).toString(),
+		}).toString();
 	
-		// proxys
-		proxys = {},
-	
-		// secue proxys
-		secureProxys = {},
+		let proxys = {};
+		let secureProxys = {};
 		
-		// secure context
-		secureContext = {},
+		let secureContext = {};
 	
-		// redirect port
-		redirectPort = 10001,
-	
-		// ready port
-		readyPort = 10000,
+		let redirectPort = 10001;
+		let readyPort = 10000;
 		
-		// http server
-		httpServer,
-		
-		// https server
-		httpsServer,
-	
-		// route.
-		route,
-	
-		// redirect.
-		redirect,
-		
-		// redirect by language.
-		redirectByLanguage,
-	
-		// ready.
-		ready,
-	
-		// sroute.
-		sroute;
-	
-		route = function(domain, port) {
+		let route = (domain, port) => {
 			
 			proxys[domain] = {
-				server : httpProxy.createProxyServer({
+				server : HTTPProxy.createProxyServer({
 					target : 'http://' + domain,
 					xfwd : true
 				}),
-				webSocketServer : httpProxy.createProxyServer({
+				webSocketServer : HTTPProxy.createProxyServer({
 					target: 'ws://' + domain,
 					xfwd : true,
 					ws : true
@@ -85,29 +44,27 @@ global.SkyProxy = METHOD({
 			};
 		};
 	
-		redirect = function(domain, to) {
+		let redirect = (domain, to) => {
 	
-			http.createServer(function(req, res) {
+			HTTP.createServer((req, res) => {
 				res.writeHead(302, {
 					'Location' : to
 				});
 				res.end();
 			}).listen(redirectPort);
-	
+			
 			route(domain, redirectPort);
-	
+			
 			redirectPort += 1;
 		};
 		
-		redirectByLanguage = function(domain, toByLanguage) {
+		let redirectByLanguage = (domain, toByLanguage) => {
 	
-			http.createServer(function(req, res) {
+			HTTP.createServer((req, res) => {
 				
-				var
-				// accept language
-				acceptLanguage = req.headers['accept-language'];
+				let acceptLanguage = req.headers['accept-language'];
 				
-				if (acceptLanguage !== undefined && EACH(toByLanguage, function(to, language) {
+				if (acceptLanguage !== undefined && EACH(toByLanguage, (to, language) => {
 					
 					if (acceptLanguage.indexOf(language) === 0) {
 						res.writeHead(302, {
@@ -131,53 +88,63 @@ global.SkyProxy = METHOD({
 			redirectPort += 1;
 		};
 	
-		http.createServer(function(req, res) {
+		HTTP.createServer((req, res) => {
 			res.writeHead(200, {
 				'Content-Type' : 'text/html'
 			});
 			res.end(readyPage, 'utf-8');
 		}).listen(readyPort);
 	
-		ready = function(domain) {
+		let ready = (domain) => {
 			route(domain, readyPort);
 		};
 	
-		sroute = function(domain, port, key, cert) {
+		let sroute = (domain, port, key, cert) => {
 			
 			secureProxys[domain] = {
-				server : httpProxy.createProxyServer({
+				server : HTTPProxy.createProxyServer({
 					target : 'https://' + domain,
 					xfwd : true
 				}),
-				webSocketServer : httpProxy.createProxyServer({
+				webSocketServer : HTTPProxy.createProxyServer({
 					target: 'wss://' + domain,
 					xfwd : true,
 					ws : true
 				}),
 				ssl : {
-					key : fs.readFileSync(key),
-					cert : fs.readFileSync(cert)
+					key : FS.readFileSync(key),
+					cert : FS.readFileSync(cert)
 				},
 				port : port
 			};
 			
-			secureContext[domain] = tls.createSecureContext({
-				key : fs.readFileSync(key),
-				cert : fs.readFileSync(cert)
+			secureContext[domain] = TLS.createSecureContext({
+				key : FS.readFileSync(key),
+				cert : FS.readFileSync(cert)
 			}).context;
+			
+			HTTP.createServer((req, res) => {
+				res.writeHead(302, {
+					'Location' : 'https://' + domain + req.url
+				});
+				res.end();
+				
+			}).listen(redirectPort);
+			
+			route(domain, redirectPort);
+			
+			redirectPort += 1;
 		};
 		
-		httpServer = http.createServer(function(req, res) {
+		let httpServer = HTTP.createServer((req, res) => {
 	
-			var
-			// proxy
-			proxy = proxys[req.headers.host];
+			let proxy = proxys[req.headers.host];
 	
 			if (proxy !== undefined) {
 	
 				proxy.server.web(req, res, {
 					target : 'http://localhost:' + proxy.port
-				}, function(e) {
+				}, (e) => {
 					console.log(e);
 				});
 	
@@ -186,16 +153,14 @@ global.SkyProxy = METHOD({
 			}
 		});
 		
-		httpServer.on('upgrade', function(req, socket, head) {
+		httpServer.on('upgrade', (req, socket, head) => {
 			
-			var
-			// proxy
-			proxy = proxys[req.headers.host];
+			let proxy = proxys[req.headers.host];
 	
 			if (proxy !== undefined) {
 				proxy.webSocketServer.ws(req, socket, head, {
 					target : 'ws://localhost:' + proxy.port
-				}, function(e) {
+				}, (e) => {
 					console.log(e);
 				});
 			}
@@ -203,21 +168,19 @@ global.SkyProxy = METHOD({
 		
 		httpServer.listen(80);
 	
-		httpsServer = https.createServer({
-			SNICallback : function(domain, callback) {
+		let httpsServer = HTTPS.createServer({
+			SNICallback : (domain, callback) => {
 				callback(null, secureContext[domain]);
 			}
-		}, function(req, res) {
+		}, (req, res) => {
 	
-			var
-			// proxy
-			proxy = secureProxys[req.headers.host];
+			let proxy = secureProxys[req.headers.host];
 	
 			if (proxy !== undefined) {
 				
 				proxy.server.web(req, res, {
 					target : 'http://localhost:' + proxy.port
-				}, function(e) {
+				}, (e) => {
 					console.log(e);
 				});
 	
@@ -226,16 +189,14 @@ global.SkyProxy = METHOD({
 			}
 		});
 		
-		httpsServer.on('upgrade', function(req, socket, head) {
+		httpsServer.on('upgrade', (req, socket, head) => {
 			
-			var
-			// proxy
-			proxy = secureProxys[req.headers.host];
+			let proxy = secureProxys[req.headers.host];
 	
 			if (proxy !== undefined) {
 				proxy.webSocketServer.ws(req, socket, head, {
 					target : 'ws://localhost:' + proxy.port
-				}, function(e) {
+				}, (e) => {
 					console.log(e);
 				});
 			}

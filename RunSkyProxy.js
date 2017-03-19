@@ -1,10 +1,8 @@
 require('./SkyProxy.js');
 
-// 멀티코어 사용
-CPU_CLUSTERING(function() {
-	'use strict';
+CPU_CLUSTERING(() => {
 	
-	SkyProxy(function(route, redirect, redirectByLanguage, ready, sroute) {
+	SkyProxy((route, redirect, redirectByLanguage, ready, sroute) => {
 		
 		// rout samples
 		route('a.site.com', 8888);
@@ -24,7 +22,5 @@ CPU_CLUSTERING(function() {
 		
 		// sroute sample
 		sroute('secure.site.com', 8887, '/home/site/privkey.pem', '/home/site/cert.pem');
-		// http://secure.site.com to https://secure.site.com
-		redirect('secure.site.com', 'https://secure.site.com');
 	});
 });
