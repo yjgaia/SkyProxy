@@ -128,7 +128,6 @@ global.SkyProxy = METHOD({
 					'Location' : 'https://' + domain + req.url
 				});
 				res.end();
-				
 			}).listen(redirectPort);
 			
 			route(domain, redirectPort);

@@ -2,10 +2,9 @@
 한 서버에서 여러 도메인을 사용하고자 할때 필요한 프록시 서버입니다.
 
 ## 설치
-1. [UPPERCASE](https://github.com/Hanul/UPPERCASE)가 설치되어 있어야 합니다.
-2. `SkyProxy` 폴더 자체를 서버에 복사합니다.
-3. `RunSkyProxy.js`을 원하는 대로 수정합니다.
-4. `forever` 등으로 실행합니다.
+1. `SkyProxy` 폴더 자체를 서버에 복사합니다.
+2. `RunSkyProxy.js`을 원하는 대로 수정합니다.
+3. `forever` 등으로 실행합니다.
 
 ```
 forever start RunSkyProxy.js
@@ -17,10 +16,9 @@ forever start RunSkyProxy.js
 require('./SkyProxy.js');
 
 // 멀티코어 사용
-CPU_CLUSTERING(function() {
-	'use strict';
+CPU_CLUSTERING(() => {
 	
-	SkyProxy(function(route, redirect, redirectByLanguage, ready, sroute) {
+	SkyProxy((route, redirect, redirectByLanguage, ready, sroute) => {
 		...
 	});
 });
