@@ -2,23 +2,26 @@
 한 서버에서 여러 도메인을 사용하고자 할때 필요한 프록시 서버입니다.
 
 ## 설치
-1. `SkyProxy` 폴더 자체를 서버에 복사합니다.
+1. `SkyProxy` 프로젝트를 서버에 복사합니다. `Git`을 이용하면 간편하게 복사할 수 있습니다.
+    ```
+    git clone https://github.com/Hanul/SkyProxy.git
+    ```
 2. `RunSkyProxy.js`을 원하는 대로 수정합니다.
-3. `forever` 등으로 실행합니다.
-
-```
-forever start RunSkyProxy.js
-```
+3. [`forever`](https://www.npmjs.com/package/forever) 등으로 실행합니다.
+    ```
+    forever start RunSkyProxy.js
+    ```
 
 ## RunSkyProxy.js 수정하기
 `RunSkyProxy.js`의 기본 형태는 다음과 같습니다.
 ```javascript
 require('./SkyProxy.js');
 
-// 멀티코어 사용
 CPU_CLUSTERING(() => {
 	
 	SkyProxy((route, redirect, redirectByLanguage, ready, sroute) => {
+		
+		// 이곳에 필요한 내용을 작성합니다.
 		...
 	});
 });
@@ -37,6 +40,7 @@ redirect('c.site.com', 'http://b.site.com');
 ```
 
 ### redirectByLanguage
+접속한 클라이언트의 언어별로 리다이렉트 경로를 다르게 지정할 수 있습니다.
 ```
 redirectByLanguage('site.com', {
 	en : 'http://en.site.com',
@@ -45,16 +49,15 @@ redirectByLanguage('site.com', {
 ```
 
 ### ready
+준비중 페이지를 표시합니다.
 ```
 ready('ready.site.com');
 ```
 
 ### sroute
-`https` 프로토콜을 사용하는 경우에 사용합니다.
+HTTPS 프로토콜을 사용하는 경우에 사용합니다.
 ```
 sroute('secure.site.com', 8887, '/home/site/privkey.pem', '/home/site/cert.pem');
-// http://secure.site.com to https://secure.site.com
-redirect('secure.site.com', 'https://secure.site.com');
 ```
 
 ## 404.html
