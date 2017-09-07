@@ -2,7 +2,7 @@ require('./SkyProxy.js');
 
 CPU_CLUSTERING(() => {
 	
-	SkyProxy((route, redirect, redirectByLanguage, ready, sroute) => {
+	SkyProxy((route, redirect, redirectByLanguage, redirectByOS, ready, sroute) => {
 		
 		// rout samples
 		route('a.site.com', 8888);
@@ -15,6 +15,12 @@ CPU_CLUSTERING(() => {
 		redirectByLanguage('site.com', {
 			en : 'http://en.site.com',
 			ko : 'http://ko.site.com'
+		});
+		
+		// redirectByOS sample
+		redirectByLanguage('site.com', {
+			ios : 'http://ios.site.com',
+			android : 'http://android.site.com'
 		});
 		
 		// ready sample

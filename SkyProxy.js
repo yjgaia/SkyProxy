@@ -87,6 +87,41 @@ global.SkyProxy = METHOD({
 	
 			redirectPort += 1;
 		};
+		
+		let redirectByOS = (domain, toByOS) => {
+	
+			HTTP.createServer((req, res) => {
+				
+				let userAgent = req.headers['user-agent'];
+				
+				let to;
+				if (userAgent !== undefined) {
+					if (/like Mac OS X/.test(userAgent) === true || /(Intel|PPC) Mac OS X/.test(userAgent) === true) {
+						to = toByOS.ios;
+					} else {
+						to = toByOS.android;
+					}
+				}
+				
+				if (to === undefined) {
+					EACH(toByOS, (_to) => {
+						to = _to;
+						return false;
+					});
+				}
+				
+				res.writeHead(302, {
+					'Location' : to
+				});
+				
+				res.end();
+				
+			}).listen(redirectPort);
+	
+			route(domain, redirectPort);
+	
+			redirectPort += 1;
+		};
 	
 		HTTP.createServer((req, res) => {
 			res.writeHead(200, {
@@ -203,7 +238,7 @@ global.SkyProxy = METHOD({
 		
 		httpsServer.listen(443);
 		
-		handler(route, redirect, redirectByLanguage, ready, sroute);
+		handler(route, redirect, redirectByLanguage, redirectByOS, ready, sroute);
 		
 		console.log('Started SkyProxy!');
 	}
