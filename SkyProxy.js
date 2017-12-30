@@ -136,27 +136,34 @@ global.SkyProxy = METHOD({
 	
 		let sroute = (domain, port, key, cert) => {
 			
-			secureProxys[domain] = {
-				server : HTTPProxy.createProxyServer({
-					target : 'https://' + domain,
-					xfwd : true
-				}),
-				webSocketServer : HTTPProxy.createProxyServer({
-					target: 'wss://' + domain,
-					xfwd : true,
-					ws : true
-				}),
-				ssl : {
+			let register = () => {
+				
+				secureProxys[domain] = {
+					server : HTTPProxy.createProxyServer({
+						target : 'https://' + domain,
+						xfwd : true
+					}),
+					webSocketServer : HTTPProxy.createProxyServer({
+						target: 'wss://' + domain,
+						xfwd : true,
+						ws : true
+					}),
+					ssl : {
+						key : FS.readFileSync(key),
+						cert : FS.readFileSync(cert)
+					},
+					port : port
+				};
+				
+				secureContext[domain] = TLS.createSecureContext({
 					key : FS.readFileSync(key),
 					cert : FS.readFileSync(cert)
-				},
-				port : port
+				}).context;
 			};
 			
-			secureContext[domain] = TLS.createSecureContext({
-				key : FS.readFileSync(key),
-				cert : FS.readFileSync(cert)
-			}).context;
+			register();
+			WATCH_FILE_CHANGE(key, register);
+			WATCH_FILE_CHANGE(cert, register);
 			
 			HTTP.createServer((req, res) => {
 				res.writeHead(302, {

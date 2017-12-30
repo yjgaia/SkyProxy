@@ -1,10 +1,14 @@
-'use strict';
-
 /*!
  * ws: a node.js websocket client
  * Copyright(c) 2011 Einar Otto Stangvik <einaros@gmail.com>
  * MIT Licensed
  */
+
+'use strict';
+
+const safeBuffer = require('safe-buffer');
+
+const Buffer = safeBuffer.Buffer;
 
 /**
  * Merges an array of buffers into a new buffer.
@@ -31,7 +35,7 @@ try {
   const bufferUtil = require('bufferutil');
 
   module.exports = Object.assign({ concat }, bufferUtil.BufferUtil || bufferUtil);
-} catch (e) {
+} catch (e) /* istanbul ignore next */ {
   /**
    * Masks a buffer using the given mask.
    *

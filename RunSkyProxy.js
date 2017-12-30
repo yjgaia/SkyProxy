@@ -18,7 +18,7 @@ CPU_CLUSTERING(() => {
 		});
 		
 		// redirectByOS sample
-		redirectByLanguage('site.com', {
+		redirectByOS('site.com', {
 			ios : 'http://ios.site.com',
 			android : 'http://android.site.com'
 		});
