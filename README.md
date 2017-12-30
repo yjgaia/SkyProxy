@@ -19,7 +19,7 @@ require('./SkyProxy.js');
 
 CPU_CLUSTERING(() => {
 	
-	SkyProxy((route, redirect, redirectByLanguage, ready, sroute) => {
+	SkyProxy((route, redirect, redirectByLanguage, redirectByOS, ready, sroute) => {
 		
 		// 이곳에 필요한 내용을 작성합니다.
 		...
@@ -45,6 +45,15 @@ redirect('c.site.com', 'http://b.site.com');
 redirectByLanguage('site.com', {
 	en : 'http://en.site.com',
 	ko : 'http://ko.site.com'
+});
+```
+
+### redirectByOS
+접속한 클라이언트의 운영체제별로 리다이렉트 경로를 다르게 지정할 수 있습니다.
+```
+redirectByOS('site.com', {
+	ios : 'http://ios.site.com',
+	android : 'http://android.site.com'
 });
 ```
 
