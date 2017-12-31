@@ -162,8 +162,14 @@ global.SkyProxy = METHOD({
 			};
 			
 			register();
-			WATCH_FILE_CHANGE(key, register);
-			WATCH_FILE_CHANGE(cert, register);
+			WATCH_FILE_CHANGE(key, () => {
+				console.log(CONSOLE_YELLOW(key + '파일의 변경이 감지되었습니다. 새로 불러옵니다.'));
+				register();
+			});
+			WATCH_FILE_CHANGE(cert, () => {
+				console.log(CONSOLE_YELLOW(cert + '파일의 변경이 감지되었습니다. 새로 불러옵니다.'));
+				register();
+			});
 			
 			HTTP.createServer((req, res) => {
 				res.writeHead(302, {
@@ -247,6 +253,6 @@ global.SkyProxy = METHOD({
 		
 		handler(route, redirect, redirectByLanguage, redirectByOS, ready, sroute);
 		
-		console.log('Started SkyProxy!');
+		console.log(CONSOLE_GREEN('SkyProxy가 실행되었습니다.'));
 	}
 });
