@@ -162,12 +162,10 @@ global.SkyProxy = METHOD({
 			};
 			
 			register();
-			WATCH_FILE_CHANGE(key, () => {
-				console.log(CONSOLE_YELLOW(key + '파일의 변경이 감지되었습니다. 새로 불러옵니다.'));
-				register();
-			});
-			WATCH_FILE_CHANGE(cert, () => {
-				console.log(CONSOLE_YELLOW(cert + '파일의 변경이 감지되었습니다. 새로 불러옵니다.'));
+			
+			// 매일 새로 불러옴
+			INTERVAL(86400, () => {
+				console.log(CONSOLE_YELLOW(key + '파일 및 ' + cert + '파일을 새로 새로 불러옵니다.'));
 				register();
 			});
 			
