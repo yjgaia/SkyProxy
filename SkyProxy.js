@@ -191,9 +191,12 @@ global.SkyProxy = METHOD({
 					target : 'http://localhost:' + proxy.port
 				}, (e) => {
 					console.log(e);
+					res.writeHead(500);
+					res.end();
 				});
 	
 			} else {
+				res.writeHead(404);
 				res.end(_404Page, 'utf-8');
 			}
 		});
@@ -227,9 +230,12 @@ global.SkyProxy = METHOD({
 					target : 'http://localhost:' + proxy.port
 				}, (e) => {
 					console.log(e);
+					res.writeHead(500);
+					res.end();
 				});
 	
 			} else {
+				res.writeHead(404);
 				res.end(_404Page, 'utf-8');
 			}
 		});
